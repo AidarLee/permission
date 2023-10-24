@@ -10861,19 +10861,19 @@ a:focus {
 }
 
 .bg-login-image {
-  background: url("/staticfiles/admin/img/Auth_image.png");
+  background: url("/static/admin/img/Auth_image.png");
   background-position: center;
   background-size: cover;
 }
 
 .bg-register-image {
-  background: url("/staticfiles/admin/img/Auth_image.png");
+  background: url("/static/admin/img/Auth_image.png");
   background-position: center;
   background-size: cover;
 }
 
 .bg-password-image {
-  background: url("/staticfiles/admin/img/Auth_image.png");
+  background: url("/static/admin/img/Auth_image.png");
   background-position: center;
   background-size: cover;
 }
