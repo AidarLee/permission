@@ -364,50 +364,94 @@ def load_calculation(request):
                     chemicals_carbo = chemical_comp.carbohydrates
                     carbo +=(float(mass)*chemicals_carbo)
 
-                    #Получаем масоовую долю изолейцина в 100г для i-того ингредиента 
-                    amino_isoleicin = aminocaid_comp.izoleitsin 
-                    isolecin = (amino_isoleicin * mass * chemicals_prot)
+                    #Получаем масоовую долю изолейцина в 100г для i-того ингредиента
+                    if aminocaid_comp.izoleitsin > 0:
+                        amino_isoleicin = ((aminocaid_comp.izoleitsin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_isoleicin = aminocaid_comp.izoleitsin
+
+                    isolecin = amino_isoleicin
                     isol += isolecin
                     if amino_isoleicin > 0:
                         total_mass_prot += (float(mass) * chemicals_prot)
 
                     #Получаем масоовую долю лейцина в 100г для i-того ингредиента 
-                    amino_leitsin = aminocaid_comp.leitsin
-                    leitsin = (amino_leitsin * mass * chemicals_prot)
+                    if aminocaid_comp.leitsin > 0:
+                        amino_leitsin = ((aminocaid_comp.leitsin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_leitsin = aminocaid_comp.leitsin
+
+                    leitsin = amino_leitsin
                     leit += leitsin
 
                     #Получаем масоовую долю валина в 100г для i-того ингредиента 
-                    amino_valin = aminocaid_comp.valin
-                    valin = (amino_valin * mass * chemicals_prot)
+
+                    if aminocaid_comp.valin > 0:
+                        amino_valin = ((aminocaid_comp.valin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_valin = aminocaid_comp.valin
+
+                    valin = amino_valin
                     val += valin
 
                     #Получаем масоовую долю метионина в 100г для i-того ингредиента 
-                    amino_met = aminocaid_comp.metionin
-                    amino_tsistein = aminocaid_comp.tsistein
+
+                    if aminocaid_comp.metionin > 0:
+                        amino_met = ((aminocaid_comp.metionin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_met = aminocaid_comp.metionin
+
+                    if aminocaid_comp.tsistein > 0:
+                        amino_tsistein = ((aminocaid_comp.tsistein/1000) * 100)/chemicals_prot
+                    else:
+                        amino_tsistein = aminocaid_comp.tsistein
+
                     met_tsist = amino_tsistein + amino_met
-                    metionin = (met_tsist * mass * chemicals_prot)
+                    metionin = met_tsist
                     met_tsist1 += metionin
 
                     #Получаем масоовую долю фениланина в 100г для i-того ингредиента 
-                    amino_fenilalalin = aminocaid_comp.fenilalalin
-                    amino_tirosin = aminocaid_comp.tirosin
+                    if aminocaid_comp.fenilalalin > 0:
+                        amino_fenilalalin = ((aminocaid_comp.fenilalalin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_fenilalalin = aminocaid_comp.fenilalalin
+
+                    if aminocaid_comp.tirosin > 0:
+                        amino_tirosin = ((aminocaid_comp.tirosin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_tirosin = aminocaid_comp.tirosin
+
                     fenilanin_tirosin = amino_tirosin + amino_fenilalalin
-                    fenilanin = (fenilanin_tirosin * mass * chemicals_prot)
+                    fenilanin = fenilanin_tirosin
                     fenilalalin_tirosin1 += fenilanin
 
                     #Получаем масоовую долю триптофана в 100г для i-того ингредиента 
-                    amino_triptofan = aminocaid_comp.triptofan
-                    triptofan = (amino_triptofan * mass * chemicals_prot)
+                    if aminocaid_comp.triptofan > 0:
+                        amino_triptofan = ((aminocaid_comp.triptofan/1000) * 100)/chemicals_prot
+                    else:
+                        amino_triptofan = aminocaid_comp.triptofan
+
+                    triptofan = amino_triptofan
                     tripto += triptofan
 
                     #Получаем масоовую долю лизина в 100г для i-того ингредиента 
-                    amino_lisin = aminocaid_comp.lisin
-                    lisin = (amino_lisin * mass * chemicals_prot)
+                    if aminocaid_comp.lisin > 0:
+                        amino_lisin = ((aminocaid_comp.lisin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_lisin = aminocaid_comp.lisin
+
+                    lisin = amino_lisin
                     lis += lisin
 
                     #Получаем масоовую долю треонина в 100г для i-того ингредиента 
-                    amino_treonin = aminocaid_comp.treonin
-                    treonin = (amino_treonin * mass * chemicals_prot)
+
+                    if aminocaid_comp.treonin > 0:
+                        amino_treonin = ((aminocaid_comp.treonin/1000) * 100)/chemicals_prot
+                    else:
+                        amino_treonin = aminocaid_comp.treonin
+
+
+                    treonin = amino_treonin
                     treon += treonin
 
                 except ValueError:

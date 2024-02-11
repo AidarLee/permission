@@ -51,19 +51,6 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link {% if expand_types %}{% else %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#collapseThree"
-            aria-expanded="true" aria-controls="collapseTwo">
-            <span>Типы</span>
-        </a>
-        <div id="collapseThree" class="collapse {% if expand_types %}show{% endif %}" aria-labelledby="headingThree" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="{% url 'types_all' %}">Список записей</a>
-                <a class="collapse-item" href="{% url 'types_create' %}">Добавить запись</a>
-            </div>
-        </div>
-    </li>
-
-    <li class="nav-item">
         <a class="nav-link {% if expand_categories %}{% else %}collapsed{% endif %}" href="#" data-toggle="collapse" data-target="#categories"
             aria-expanded="{% if expand_categories %}true {% else %}false{% endif %}" aria-controls="categories">
             <span>Категории</span>

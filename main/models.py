@@ -33,29 +33,26 @@ class Regions(models.Model):
     def __str__(self):
         return  f"{self.region} - {self.language}"
 
-# Тип продуктов (Продукт, Ингредиент, Эталонный продукт и т.д.)
-class Types(models.Model):
-    Name_of_type = models.CharField(verbose_name='Наименование типа', max_length=75, help_text='(Продукт, Ингредиент, Эталонный продукт и т.д.)', null=True)
-    language = models.CharField(max_length=50, verbose_name='Язык', choices=LanguageChoice.choices, default=LanguageChoice.RU)
+# # Тип продуктов (Продукт, Ингредиент, Эталонный продукт и т.д.)
+# class Types(models.Model):
+#     Name_of_type = models.CharField(verbose_name='Наименование типа', max_length=75, help_text='(Продукт, Ингредиент, Эталонный продукт и т.д.)', null=True)
+#     language = models.CharField(max_length=50, verbose_name='Язык', choices=LanguageChoice.choices, default=LanguageChoice.RU)
     
-    class Meta:
-        verbose_name = "Тип записи"
-    def __str__(self) -> str:
-        return f"{self.Name_of_type}"
+#     class Meta:
+#         verbose_name = "Тип записи"
+#     def __str__(self) -> str:
+#         return f"{self.Name_of_type}"
 
 # Категории продуктов (Мясные, Молочные, Хлебобулочные и т.д.)
 class Categories(models.Model):
     Name_of_category = models.CharField(verbose_name='Наименование категории', max_length=75,help_text='(Мясные, Молочные, Хлебобулочные и т.д.)')
-    Types = models.ForeignKey(Types, on_delete=models.RESTRICT, null=True)
     Region = models.ForeignKey(Regions, on_delete=models.RESTRICT, related_name='regions_category')
     language = models.CharField(max_length=50, verbose_name='Язык', choices=LanguageChoice.choices, default=LanguageChoice.RU)
     class Meta:
         verbose_name = "Категория"
         
-        
     def __str__(self):
-        types_name = self.Types.Name_of_type if self.Types else ''
-        return f"{self.Name_of_category} - {self.Region} - {types_name}"
+        return f"{self.Name_of_category} - {self.Region}"
     
 # Продукты
 class Products(models.Model):
@@ -75,7 +72,8 @@ class Products(models.Model):
 # Виды Жирнокислоты
 class FatAcids(models.Model):
     name = models.CharField(verbose_name='Название Жирнокислоты', max_length=40)  
-    
+    language = models.CharField(max_length=50, verbose_name='Язык', choices=LanguageChoice.choices, default=LanguageChoice.RU)
+
     class Meta:
         verbose_name = ' -- (Виды Жирнокислоты) -- '
     def __str__(self) -> str:

@@ -58,7 +58,6 @@
                             <th class="font-weight-bold">Кнопка</th>
                             <th class="font-weight-bold">Наименование категории</th>
                             <th class="font-weight-bold">Регион</th>
-                            <th class="font-weight-bold">Тип</th>
                             <th class="font-weight-bold">Действие</th>
                           </tr>
                         </thead>
@@ -71,7 +70,6 @@
                               <td><input type="checkbox" name="selected_ids" id="selected_ids" value="{{ value.id }}"></td>
                               <td><label class="badge font-weight-bold">{{values.Name_of_category}}</label></td>
                               <td><label class="badge badge-warning">{{values.Region}}</label></td>
-                              <td><label class="badge badge-info">{{values.Types}}</label></td>
                               <td class="edit-delete-icons">
                                 <a href="{% url 'categories_update' values.id %}"><i class="fa fa-pen-square"></i></a> |
                                 <a href="{% url 'categories_delete' values.id %}" class="text-danger"><i class="fa fa-trash"></i></i></a>

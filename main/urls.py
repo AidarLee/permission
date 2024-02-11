@@ -72,14 +72,6 @@ urlpatterns = [
     path('admin-panel/categories/clear_all/', AdminViews.categories_clear_clear, name='categories_clear_all'),
     path('admin-panel/categories/delete/', AdminViews.CategoriesDeleteView.as_view(), name='categories_delete'),
 
-    # Types View
-    path('admin-panel/types/all/', AdminViews.TypesListView.as_view(), name='types_all'),
-    path('admin-panel/types/create/', AdminViews.TypesCreateView.as_view(), name='types_create'),
-    path('admin-panel/types/update/<int:pk>/', AdminViews.TypesUpdateView.as_view(), name='types_update'),
-    path('admin-panel/types/delete/<int:id>/', AdminViews.types_delete, name='types_delete'),
-    path('admin-panel/types/clear_all/', AdminViews.types_clear_clear, name='types_clear_all'),
-    path('admin-panel/types/delete/', AdminViews.TypesDeleteView.as_view(), name='types_delete'),
-
     # Products View
     path('admin-panel/products/all/', AdminViews.ProductsListView.as_view(), name='products_all'),
     path('admin-panel/products/create/', AdminViews.ProductsCreateView.as_view(), name='products_create'),

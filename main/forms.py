@@ -101,40 +101,20 @@ class ProductsForm(forms.ModelForm):
                                         attrs={"class" : "form-control", "id" : "language"}
                                     ),
                                 required=True
-                            )     
-    
-
-class TypesForm(forms.ModelForm):
-    class Meta:
-        model = Types
-        fields = ['Name_of_type', 'language']
-    
-    Name_of_type = forms.CharField(max_length=80, required=True, widget=TextInput(
-            attrs={"type" : "text", "class" : "form-control", "id" : "title", "placeholder" : "Введите наименование типа", "size" : 80},
-            ))
-    language = forms.ChoiceField(
-                                choices=LanguageChoice.choices,
-                                widget= forms.Select(
-                                        attrs={"class" : "form-control", "id" : "language"}
-                                    ),
-                                required=True
-                            )     
+                            ) 
     
     
     
 class CategoriesForm(forms.ModelForm):
     class Meta:
         model = Categories
-        fields = ['Name_of_category', 'Region', 'Types', 'language']
+        fields = ['Name_of_category', 'Region', 'language']
     
     Name_of_category = forms.CharField(max_length=80, required=True, widget=TextInput(
             attrs={"type" : "text", "class" : "form-control", "id" : "title", "placeholder" : "Введите категорию", "size" : 80},
             ))
     Region = forms.ModelChoiceField(queryset=Regions.objects.all(), 
                                      widget=forms.Select(attrs={"class": "form-control", 'required': True, "id" : "Region"},
-            ))
-    Types = forms.ModelChoiceField(queryset=Types.objects.all(), 
-                                     widget=forms.Select(attrs={"class": "form-control", 'required': True, "id" : "Types"},
             ))
     language = forms.ChoiceField(
                                 choices=LanguageChoice.choices,

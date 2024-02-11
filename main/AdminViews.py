@@ -254,7 +254,7 @@ def Import_Excel_pandas(request):
 def import_data_Regions(regions,lang):
     try:
         for item in regions:
-            if not Regions.objects.filter(region=item).exists():
+            if not Regions.objects.filter(region=item, language=lang).exists():
                 region = Regions(region=item, language=lang)
                 region.save()
         message = "Import success!"
@@ -268,23 +268,18 @@ def import_data_Categories(sheet,data,lang):
     # print(f"Что получил---------------------")
     # print(f"Регион: {sheet}")
     # print(f"Данные: {data}")
-    types_id = None
-    try:
-        types_id = Types.objects.get(Name_of_type="Продукт")
-    except Types.DoesNotExist:
-        message = "Types id does not exist with name <Продукт>, create type with name <Продукт>!"
     try:
         for item in data[1:]:
             region_obj = Regions.objects.filter(region=sheet).first()
-            if not Categories.objects.filter(Name_of_category=item, Region=region_obj, Types=types_id).exists():
+            if not Categories.objects.filter(Name_of_category=item, Region=region_obj, language=lang).exists():
                 if item is not None:
-                    category = Categories(Name_of_category=item, Types=types_id, Region=region_obj,language=lang)
+                    category = Categories(Name_of_category=item, Region=region_obj,language=lang)
                     #print(f"Что записывает: {category}")
                     category.save()
         message = "Import success!"
     except Exception as e:
         message = "Import not success!" 
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred 1: {str(e)}")
     return message
 
 def import_data_Ingredients(sheet,category,data,lang):
@@ -299,7 +294,7 @@ def import_data_Ingredients(sheet,category,data,lang):
             region_obj = Regions.objects.filter(region=sheet).first()
             category_obj = Categories.objects.filter(Name_of_category=itemcat, Region=region_obj).first()
             #print(f"Что получил по категориям: {category_obj}")
-            if not Products.objects.filter(attribute_name=item, Category=category_obj).exists():
+            if not Products.objects.filter(attribute_name=item, Category=category_obj, language=lang).exists():
                 if item is not None:
                     product = Products(attribute_name=item, Category=category_obj,language=lang)
                     #print(f"Что записывает: {product}")
@@ -307,7 +302,7 @@ def import_data_Ingredients(sheet,category,data,lang):
         message = "Import success!"
     except Exception as e:
         message = "Import not success!"
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred 2: {str(e)}")
     return message
 
 def import_data_ChemicalsIngredients(sheet,category,ingredients, data):
@@ -424,49 +419,59 @@ def import_data_MineralIngredients(sheet, category, ingredients, data):
    
     except Exception as e:
         message = "Import not success!"
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred 3: {str(e)}")
     return message
 
 def types_acid(request, lang):
-    type_name = ""
     if request == "Насыщенные жирные кислоты, %" and lang == "Русский":
-        type_name = "Насыщенные жирные кислоты, %"
-        return type_name
+        request = "Насыщенные жирные кислоты, %"
+        return request
     elif request == "Мононенасыщенные жирные кислоты, %" and lang == "Русский":
-        type_name = "Мононенасыщенные жирные кислоты, %"
-        return type_name
+        request = "Мононенасыщенные жирные кислоты, %"
+        return request
     elif request == "Полиненасыщенные жирные кислоты, %" and lang == "Русский":
-        type_name = "Полиненасыщенные жирные кислоты, %"
-        return type_name
-    elif request == "Насыщенные жирные кислоты, %" and lang == "English":
-        type_name = "Saturated fatty acids, %"
-        return type_name
-    elif request == "Мононенасыщенные жирные кислоты, %" and lang == "English":
-        type_name = "Monounsaturated fatty acids, %"
-        return type_name
-    elif request == "Полиненасыщенные жирные кислоты, %" and lang == "English":
-        type_name = "Polyunsaturated fatty acids, %"
-        return type_name
+        request = "Полиненасыщенные жирные кислоты, %"
+        return request
+    elif request == "Saturated fatty acids, %" and lang == "English":
+        request = "Saturated fatty acids, %"
+        return request
+    elif request == "Monounsaturated fatty acids, %" and lang == "English":
+        request = "Monounsaturated fatty acids, %"
+        return request
+    elif request == "Polyunsaturated fatty acids, %" and lang == "English":
+        request = "Polyunsaturated fatty acids, %"
+        return request
     else:
-        type_name = ""
-        return type_name
+        return request
 
 def import_data_FatAcidsIngresients(sheet,category,ingredients,data,lang):
     try:
         item_for_acid = data[0]
-        fat_acids = import_data_fatacids(data[0])
+        fat_acids = import_data_fatacids(data[0], lang)
         fat_acids_type = import_data_fatacidstype(data[0],lang)
         
         for itemcat, itemingr, item in zip(category[1:], ingredients[1:], data[1:]):
             item = edititems(item)
             i=0
+            fat_acid_type = 'Насыщенные жирные кислоты, %'
             category_obj = Categories.objects.get(Name_of_category=itemcat, Region=Regions.objects.filter(region=sheet).first())
             product_obj = Products.objects.get(attribute_name=itemingr, Category=category_obj)
                 
             for k, fatacid in zip(item, item_for_acid):
-                fat_acids_obj = FatAcids.objects.filter(name=fatacid.split('*')[0]).first()
-                type_ac = types_acid(fatacid.split('*')[1],lang)
-                types_fataacid = FatAcidsType.objects.get(name=type_ac)
+                fat_acid_type_value = types_acid(fatacid, lang)
+                
+                if fat_acid_type_value == 'Мононенасыщенные жирные кислоты, %':
+                    fat_acid_type = 'Мононенасыщенные жирные кислоты, %'
+                elif fat_acid_type_value == 'Monounsaturated fatty acids, %':
+                    fat_acid_type = 'Monounsaturated fatty acids, %'
+                if fat_acid_type_value == 'Полиненасыщенные жирные кислоты, %':
+                    fat_acid_type = 'Полиненасыщенные жирные кислоты, %'
+                elif fat_acid_type_value =='Polyunsaturated fatty acids, %':
+                    fat_acid_type = 'Polyunsaturated fatty acids, %'
+                elif fat_acid_type_value == 'Saturated fatty acids, %':
+                    fat_acid_type = 'Saturated fatty acids, %'
+                
+                types_fataacid = FatAcidsType.objects.get(name=fat_acid_type, language = lang)
                 if k is not None:
                         object_fat_acid = FatAcids.objects.filter(name=fatacid.split('*')[0]).first()
                         fatacids = FatAcidCompositionOfMeal(
@@ -481,16 +486,18 @@ def import_data_FatAcidsIngresients(sheet,category,ingredients,data,lang):
         message = "Import success!"
     except Exception as e:
         message = "Import not success!"
-        print(f"An error occurred: {str(e)}")
+        print(f"An error occurred 4: {str(e)}")
     return message
 
-def import_data_fatacids(item):
+def import_data_fatacids(item, lang):
     try:
         for value in item:
-            if item[0] is not None:
-                if not FatAcids.objects.filter(name=value).exists():
-                    fatacids = FatAcids(name=value)
-                    fatacids.save()
+            criteria = ['Насыщенные жирные кислоты, %', 'Saturated fatty acids, %', 'Мононенасыщенные жирные кислоты, %', 'Monounsaturated fatty acids, %', 'Полиненасыщенные жирные кислоты, %', 'Polyunsaturated fatty acids, %']
+            if value not in criteria:
+                if item[0] is not None:
+                    if not FatAcids.objects.filter(name=value, language=lang).exists():
+                        fatacids = FatAcids(name=value, language=lang)
+                        fatacids.save()
         return item
     except:
         message = "Import not success!"
@@ -500,27 +507,28 @@ def import_data_fatacidstype(item,lang):
     try:
         items = []
         for value in item:
-            if value == "Насыщенные жирные кислоты, %":
+            value = value.split('*')
+            if value[0] == "Насыщенные жирные кислоты, %" or value[0]== "Saturated fatty acids, %":
                 if item[0] is not None:
-                    if not FatAcidsType.objects.filter(name=value,language=lang).exists():
-                        fatacidstype = FatAcidsType(name=value,language=lang)
+                    if not FatAcidsType.objects.filter(name=value[0],language=lang).exists():
+                        fatacidstype = FatAcidsType(name=value[0],language=lang)
                         fatacidstype.save()
                         items.append(fatacidstype)
-            elif value =="Мононенасыщенные жирные кислоты, %":
+            elif value[0] =="Мононенасыщенные жирные кислоты, %" or value[0]== "Monounsaturated fatty acids, %":
                 if item[0] is not None:
-                    if not FatAcidsType.objects.filter(name=value,language=lang).exists():
-                        fatacidstype = FatAcidsType(name=value,language=lang)
+                    if not FatAcidsType.objects.filter(name=value[0],language=lang).exists():
+                        fatacidstype = FatAcidsType(name=value[0],language=lang)
                         fatacidstype.save()
                         items.append(fatacidstype)
-            elif value =="Полиненасыщенные жирные кислоты, %":
+            elif value[0] =="Полиненасыщенные жирные кислоты, %" or value[0]== "Polyunsaturated fatty acids, %":
                 if item[0] is not None:
-                    if not FatAcidsType.objects.filter(name=value,language=lang).exists():
-                        fatacidstype = FatAcidsType(name=value,language=lang)
+                    if not FatAcidsType.objects.filter(name=value[0],language=lang).exists():
+                        fatacidstype = FatAcidsType(name=value[0],language=lang)
                         fatacidstype.save()
                         items.append(fatacidstype)
         return items
-    except:
-        message = "Import not success!"
+    except Exception as e:
+        message = f"Import not success! Problem {e}"
     return message
 
 
@@ -896,86 +904,86 @@ def categories_delete(request, id):
     return render(request, "admin_templates/pages/categories/categories_delete_confirm.html", context)
 
 
-# Typs CRUD operations
+# # Typs CRUD operations
 
-class TypesView(View):
-    model = Types
-    form_class = TypesForm
-    active_panel = "types-panel"
-    success_url = reverse_lazy("types_create")
-    extra_context = {
-        "is_active" : active_panel,
-        "active_types" : "active",
-        "expand_types" : "show",
-        }
+# class TypesView(View):
+#     model = Types
+#     form_class = TypesForm
+#     active_panel = "types-panel"
+#     success_url = reverse_lazy("types_create")
+#     extra_context = {
+#         "is_active" : active_panel,
+#         "active_types" : "active",
+#         "expand_types" : "show",
+#         }
     
-class TypesListView(LoginRequiredMixin, TypesView, ListView):
-    login_url = "login_page"
-    template_name = "admin_templates/pages/types/types_list.html"
-    paginate_by = 10
+# class TypesListView(LoginRequiredMixin, TypesView, ListView):
+#     login_url = "login_page"
+#     template_name = "admin_templates/pages/types/types_list.html"
+#     paginate_by = 10
 
-class TypesCreateView(LoginRequiredMixin, SuccessMessageMixin, TypesView, CreateView):
-    login_url = 'login_page'
-    template_name = 'admin_templates/pages/types/types_form.html'
-    success_message = "Запись успешно Добавлена!"  
+# class TypesCreateView(LoginRequiredMixin, SuccessMessageMixin, TypesView, CreateView):
+#     login_url = 'login_page'
+#     template_name = 'admin_templates/pages/types/types_form.html'
+#     success_message = "Запись успешно Добавлена!"  
 
-class TypesUpdateView(LoginRequiredMixin, SuccessMessageMixin, TypesView, UpdateView):
-    login_url = "login_page"
-    template_name = "admin_templates/pages/types/types_form.html"
-    success_url = reverse_lazy("types_all")
-    success_message = "Запись успешно Обновлена!"
+# class TypesUpdateView(LoginRequiredMixin, SuccessMessageMixin, TypesView, UpdateView):
+#     login_url = "login_page"
+#     template_name = "admin_templates/pages/types/types_form.html"
+#     success_url = reverse_lazy("types_all")
+#     success_message = "Запись успешно Обновлена!"
 
-class TypesDeleteView(View):
-    def post(self, request):
-        selected_ids = request.POST.getlist('selected_ids')
-        if selected_ids:
-            Types.objects.filter(id__in=selected_ids).delete()
+# class TypesDeleteView(View):
+#     def post(self, request):
+#         selected_ids = request.POST.getlist('selected_ids')
+#         if selected_ids:
+#             Types.objects.filter(id__in=selected_ids).delete()
 
-            messages.success(request, 'Выбранные записи успешно удалены.')
-        else:
-            messages.error(request, 'Не выбраны записи для удаления.')
+#             messages.success(request, 'Выбранные записи успешно удалены.')
+#         else:
+#             messages.error(request, 'Не выбраны записи для удаления.')
 
-        return redirect('types_all')
+#         return redirect('types_all')
 
-def types_clear_clear(request):
-    message = None
-    if request.method =="POST":
-        try:
-            model = Types.objects.all().delete()
-            messages.success(request, "Все записи успешно удалены!")
-            return redirect("types_all")
+# def types_clear_clear(request):
+#     message = None
+#     if request.method =="POST":
+#         try:
+#             model = Types.objects.all().delete()
+#             messages.success(request, "Все записи успешно удалены!")
+#             return redirect("types_all")
 
-        except Types.DoesNotExist:
-            messages.error(request, "Не удалось удалить все записи, повторите попытку!")
-            return redirect("types_delete")
+#         except Types.DoesNotExist:
+#             messages.error(request, "Не удалось удалить все записи, повторите попытку!")
+#             return redirect("types_delete")
 
-    context={
-        "message":message,
-    }
+#     context={
+#         "message":message,
+#     }
 
-    return render(request, "admin_templates/pages/types/types_all_delete_confirm.html", context)    
+#     return render(request, "admin_templates/pages/types/types_all_delete_confirm.html", context)    
 
-def types_delete(request, id):
-    context = {
-            "is_active" : "types-panel",
-            "active_types" : "active",
-            "expand_types" : "show",
-    }
-    obj = get_object_or_404(Types, id = id)
-    if request.method =="POST":
+# def types_delete(request, id):
+#     context = {
+#             "is_active" : "types-panel",
+#             "active_types" : "active",
+#             "expand_types" : "show",
+#     }
+#     obj = get_object_or_404(Types, id = id)
+#     if request.method =="POST":
         
-        try:
-            # delete object
-            obj.delete()
-            # after deleting redirect to
-            # home page
-            messages.success(request, "Запись успешно удалено!")
-            return redirect("types_all")
-        except Exception as e:
-            messages.error(request, "Не удалось удалить запись, повторите попытку!")
-            return redirect("types_delete")
+#         try:
+#             # delete object
+#             obj.delete()
+#             # after deleting redirect to
+#             # home page
+#             messages.success(request, "Запись успешно удалено!")
+#             return redirect("types_all")
+#         except Exception as e:
+#             messages.error(request, "Не удалось удалить запись, повторите попытку!")
+#             return redirect("types_delete")
  
-    return render(request, "admin_templates/pages/types/types_delete_confirm.html", context)
+#     return render(request, "admin_templates/pages/types/types_delete_confirm.html", context)
 
 
 # FatAcids CRUD operations
